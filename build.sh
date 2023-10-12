@@ -1,1 +1,1 @@
-clear;tsc;npx webpack
+clear;tsc;npx webpack;cp dist/main.js index.js
