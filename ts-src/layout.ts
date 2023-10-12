@@ -279,6 +279,8 @@ function createListWithName(api: API, title: string): HTMLElement {
             return;
         }
 
+        console.log(el.id);
+
         api.deleteTaskList(el.id);
 
         const listDiv = document.querySelector('#task-lists') as HTMLDivElement;
