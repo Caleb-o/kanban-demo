@@ -11,13 +11,22 @@ Simple Kanban board to practice front-end development
 -   Task drag n drop between lists
 -   Simple error modal
 -   Local storage
--   No frameworks, just the JS generated from TS :^)
+-   No frameworks, just the JS generated from TS and webpack :^)
 
-## Currently Missing
+## Dev dependencies
+
+-   TSC
+-   Webpack
+
+## Currently Missing / Wanted
 
 -   Task deletion
 -   More task details and options
 -   Color visible from card
+-   Due date visible from card (if exists)
+-   Re-arrange lists
+-   Background image select
+-   import / export board
 
 ## Sources Used
 
