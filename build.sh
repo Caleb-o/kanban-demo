@@ -1,0 +1,1 @@
+clear;tsc;npx webpack

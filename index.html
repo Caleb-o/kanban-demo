@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Kanban</title>
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="style.css" />
+        <script src="dist/main.js" defer></script>
+    </head>
+    <body>
+        <!--Kanban Page-->
+        <div class="board">
+            <form id="todo-form">
+                <button id="add-task-btn">New Task +</button>
+            </form>
+
+            <div id="task-lists">
+                <button id="list-add-btn">+</button>
+            </div>
+        </div>
+
+        <!-- Error Modal -->
+        <div id="error-modal">
+            <div id="error-modal-body">
+                <div id="error-modal-content">
+                    <h1>Error Occured</h1>
+                    <p id="error-modal-text">Default Text</p>
+                </div>
+                <button id="error-modal-close">Close</button>
+            </div>
+        </div>
+
+        <!-- Form MODAL -->
+        <div>
+            <!-- The Modal -->
+            <div id="modal">
+                <!-- Modal content -->
+                <div id="modal-content">
+                    <div id="modal-header">
+                        <div id="modal-header-top">
+                            <input id="task-title" type="text" size="32" value="Task Title #1" />
+                            <span id="close">&times;</span>
+                        </div>
+                        <label id="created-on">Created on xx-xx-xx</label>
+                    </div>
+                    <div id="modal-body">
+                        <div id="modal-options">
+                            <div id="tag-option">
+                                <label>Tag</label>
+                                <select id="kind-option">
+                                    <option value="prg">Programming</option>
+                                    <option value="gfx">Graphics</option>
+                                    <option value="doc">Documentation</option>
+                                </select>
+                            </div>
+                            <div id="due-date-option">
+                                <label>Due By</label>
+                                <input id="due-date" type="date" />
+                            </div>
+                            <div id="color-tag-option">
+                                <label>Color</label>
+                                <select id="color-selected" style="background-color: #5cb85c">
+                                    <option
+                                        class="color-select-opt"
+                                        value="green"
+                                        style="background-color: #5cb85c"
+                                    />
+                                    <option
+                                        class="color-select-opt"
+                                        value="red"
+                                        style="background-color: #ff6d6d"
+                                    />
+                                    <option
+                                        class="color-select-opt"
+                                        value="blue"
+                                        style="background-color: #45b6c5"
+                                    />
+                                    <option
+                                        class="color-select-opt"
+                                        value="orange"
+                                        style="background-color: #d69d23"
+                                    />
+                                </select>
+                            </div>
+                        </div>
+                        <textarea
+                            id="task-desc"
+                            placeholder="Task description..."
+                            rows="16"
+                        ></textarea>
+                        <button id="modal-save-btn">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

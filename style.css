@@ -1,0 +1,376 @@
+/* Kanban Board */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+.board {
+    width: 100%;
+    height: 100vh;
+    overflow: scroll;
+
+    background-image: url(https://images.unsplash.com/photo-1696332331308-8a064129a487?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80);
+    background-position: center;
+    background-size: cover;
+}
+
+/* -- Kanban FORM */
+#todo-form {
+    padding: 32px 32px 0;
+}
+
+#todo-form button {
+    padding: 12px 32px;
+
+    border-radius: 4px;
+    border: none;
+
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
+    background-color: white;
+    color: black;
+
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* -- Kanban board */
+#task-lists {
+    display: flex;
+    align-items: flex-start;
+    justify-content: start;
+    gap: 16px;
+
+    padding: 24px 32px;
+
+    overflow: scroll;
+    height: 100%;
+}
+
+.list-heading-text {
+    display: inline-flex;
+    margin-bottom: 8px;
+}
+
+.list-heading-inner-text {
+    margin-bottom: 8px;
+}
+
+.list-heading,
+.list-heading-inner-text {
+    font-size: 22px;
+    display: inline-flex;
+    margin-bottom: none;
+    padding-bottom: 0;
+}
+
+.list-heading-input {
+    border: none;
+    width: 90%;
+    background: transparent;
+    font-size: 22px;
+    font-weight: bold;
+    height: 22px;
+}
+
+.list-delete-span {
+    border: none;
+    display: inline;
+    color: black;
+    float: right;
+    font-size: 22px;
+    height: 22px;
+    margin-left: 1rem;
+}
+
+.list-delete-span:hover,
+.list-delete-span:focus {
+    color: grey;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.list-heading-input:focus {
+    outline: none !important;
+    border: 1px solid grey;
+    box-shadow: 0 0 4px #719ece;
+}
+
+.swim-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    background: #f4f4f4;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
+
+    padding: 12px;
+    border-radius: 4px;
+    width: 225px;
+    min-height: 120px;
+
+    flex-shrink: 0;
+}
+
+#list-add-btn {
+    border: none;
+    border-radius: 4px;
+    width: 180px;
+    font-size: 18px;
+}
+
+#list-add-btn:hover {
+    box-shadow: 0px 5px 15px inset rgba(0, 0, 0, 0.15);
+}
+
+.task {
+    display: flex;
+    background: white;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+
+    padding: 12px;
+    border-radius: 4px;
+
+    cursor: move;
+}
+
+.task .task-title {
+    font-size: 16px;
+    width: 90%;
+    max-width: 90%;
+    max-height: 100px;
+    text-wrap: pretty;
+    color: black;
+    overflow-x: hidden;
+}
+
+.task .task-edit {
+    border: none;
+    padding: 4px;
+    margin: 0 8px;
+    background: transparent;
+}
+
+.task .task-edit:hover {
+    background-color: rgb(241, 241, 241);
+    border: 1px solid rgb(241, 241, 241);
+    border-radius: 14px;
+}
+
+.is-dragging {
+    scale: 1.05;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.25);
+    background: rgb(50, 50, 50);
+    color: white;
+}
+
+/* Error Modal */
+#error-modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 3; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    backdrop-filter: blur(2px);
+}
+
+/* Modal Header */
+#error-modal-body {
+    z-index: 2;
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    min-width: 40%;
+    max-width: 70%;
+    top: 15%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    animation-name: animatetop;
+    animation-duration: 0.35s;
+}
+
+#error-modal-content h1 {
+    margin: 1rem;
+    display: flex;
+}
+
+#error-modal-text {
+    font-style: normal;
+    font-size: 18px;
+    width: 100%;
+    margin: 1rem;
+    color: black;
+}
+
+#error-modal-close {
+    border: 1px solid darkgray;
+    margin: 8px;
+    width: 120px;
+}
+
+#error-modal-close:hover {
+    background: gray;
+}
+
+/* The Modal (background) */
+#modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    backdrop-filter: blur(2px);
+}
+
+/* Modal Header */
+#modal-header {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+}
+
+#modal-header-top {
+    display: flex;
+}
+
+#created-on {
+    padding: 2px 6px;
+    font-size: 14px;
+    user-select: none;
+}
+
+#color-tag-option {
+    padding: 2px 6px;
+    font-size: 14px;
+    user-select: none;
+}
+
+#color-selected {
+    width: 32px;
+    border-radius: 8px;
+}
+
+#due-date,
+#color-selected {
+    border: none;
+}
+
+/* Modal Body */
+#modal-body {
+    margin: 0.5rem;
+    padding: 8px 16px;
+}
+
+#modal-options {
+    display: inline-flex;
+    margin-bottom: 8px;
+    font-size: 16px;
+    user-select: none;
+}
+
+#kind-option {
+    border: none;
+    border-radius: 4px;
+    background-color: #f3f3f3;
+    height: 24px;
+}
+
+#tag-option,
+#due-date-option {
+    padding: 0 8px;
+}
+
+/* Modal Content */
+#modal-content {
+    z-index: 2;
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    min-width: 40%;
+    max-width: 70%;
+    top: 15%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    animation-name: animatetop;
+    animation-duration: 0.35s;
+}
+
+/* Add Animation */
+@keyframes animatetop {
+    from {
+        top: -300px;
+        opacity: 0;
+    }
+    to {
+        top: 15%;
+        opacity: 1;
+    }
+}
+
+/* The Close Button */
+#close {
+    display: inline;
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    margin-left: 1rem;
+}
+
+#close:hover,
+#close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#task-title {
+    color: white;
+    background: none;
+    border: none;
+    width: 100%;
+    font-size: 24px;
+}
+
+#task-title:focus {
+    outline: none !important;
+}
+
+#task-desc {
+    width: 100%;
+    height: 150px;
+    margin: 8px 0;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
+}
+
+#task-desc:focus {
+    outline: none !important;
+    border: 1px solid grey;
+    box-shadow: 0 0 4px #719ece;
+}
