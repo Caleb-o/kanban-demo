@@ -1,3 +1,5 @@
+import { CardHandler } from './cardhandler';
+import { CardList } from './cardlist';
 import { generateElementsForLoadedData } from './layout';
 import { Color, DueDate, TagKind, TaskItem } from './task';
 
@@ -10,14 +12,14 @@ interface KanbanBoardData {
 export class API {
     private currentTaskIndex: number;
     private tasks: Map<number, TaskItem>;
-    private taskLists: Set<string>; // TODO: Refactor to type
+    private cardHandler: CardHandler;
 
     get Tasks(): Map<number, TaskItem> {
         return this.tasks;
     }
 
-    get TaskLists(): Set<string> {
-        return this.taskLists;
+    get TaskLists(): Array<CardList> {
+        return Array.from(this.cardHandler.Lists.values());
     }
 
     get CurrentTaskIndex(): number {
@@ -27,14 +29,14 @@ export class API {
     constructor() {
         this.currentTaskIndex = 0;
         this.tasks = new Map();
-        this.taskLists = new Set();
+        this.cardHandler = new CardHandler();
     }
 
     public serializeToLocalStorage() {
         const kanbanStr = JSON.stringify({
             index: this.currentTaskIndex,
             tasks: Array.from(this.tasks.entries()),
-            taskLists: Array.from(this.taskLists),
+            taskLists: Array.from(this.cardHandler.Lists.keys()),
         });
         localStorage.setItem('my-kanban-board', kanbanStr);
     }
@@ -51,32 +53,27 @@ export class API {
         boardData.tasks.forEach((item) =>
             this.tasks.set(item[0], TaskItem.fromLoadedData(item[1]))
         );
-        boardData.taskLists.forEach((list) => this.taskLists.add(list));
+        boardData.taskLists.forEach((list) =>
+            this.cardHandler.push(new CardList(list, listNameToID(list)))
+        );
 
         generateElementsForLoadedData(this);
     }
 
     public tryAddNewList(): boolean {
-        if (this.taskLists.has('New List')) {
-            return false;
-        }
-        this.taskLists.add('New List');
-        return true;
+        return this.cardHandler.tryAddNewList();
     }
 
     public taskListContains(identifier: string): boolean {
-        return this.taskLists.has(identifier);
+        return this.cardHandler.Lists.has(identifier);
     }
 
     public renameTaskList(oldID: string, newID: string) {
-        if (this.taskLists.has(oldID)) {
-            this.taskLists.delete(oldID);
-        }
-        this.taskLists.add(newID);
+        this.cardHandler.renameTaskList(oldID, newID);
     }
 
     public deleteTaskList(identifier: string) {
-        this.taskLists.delete(identifier);
+        this.cardHandler.removeWithID(identifier);
     }
 
     public addNewTask(
@@ -118,4 +115,10 @@ export class API {
     private advanceTask() {
         this.currentTaskIndex += 1;
     }
+}
+
+export function listNameToID(value: string): string {
+    let newName = new String(value);
+    newName = newName.replace(' ', '-').toLocaleLowerCase().concat('-list');
+    return newName.toString();
 }

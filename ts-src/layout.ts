@@ -1,4 +1,4 @@
-import { API } from './api';
+import { API, listNameToID } from './api';
 import { setupListDragZone } from './dragging';
 import { tagKindToStr, tagStrToKind } from './task';
 
@@ -150,7 +150,7 @@ export function generateElementsForLoadedData(api: API) {
 
     // Generate all list elements
     api.TaskLists.forEach((list) => {
-        const listEl = createListWithName(api, list);
+        const listEl = createListWithName(api, list.Identifier);
         listDiv.insertBefore(listEl, listDiv.children[listDiv.children.length - 1]);
     });
 
@@ -279,8 +279,6 @@ function createListWithName(api: API, title: string): HTMLElement {
             return;
         }
 
-        console.log(el.id);
-
         api.deleteTaskList(el.id);
 
         const listDiv = document.querySelector('#task-lists') as HTMLDivElement;
@@ -309,10 +307,4 @@ function listHeaderChange(el: HTMLElement, self: HTMLInputElement, e: Event, api
     api.renameTaskList(self.defaultValue, self.value);
     self.defaultValue = self.value;
     el.id = newID;
-}
-
-function listNameToID(value: string): string {
-    let newName = new String(value);
-    newName = newName.replace(' ', '-').toLocaleLowerCase().concat('-list');
-    return newName.toString();
 }
