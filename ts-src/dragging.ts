@@ -3,7 +3,7 @@ import { addDragListeners } from './layout';
 
 export function setupDraggables(api: API) {
     const dragables = document.querySelectorAll('.task') as NodeListOf<HTMLElement>;
-    const droppables = document.querySelectorAll('.swim-list') as NodeListOf<HTMLElement>;
+    const droppables = document.querySelectorAll('.list-content') as NodeListOf<HTMLElement>;
 
     dragables.forEach((task) => addDragListeners(task));
     droppables.forEach((zone) => setupListDragZone(api, zone));
@@ -17,7 +17,7 @@ export function setupListDragZone(api: API, zone: HTMLElement) {
         const currentTask = document.querySelector('.is-dragging') as HTMLElement;
 
         const taskItem = api.getTaskFromID(currentTask.id);
-        taskItem.setListID(zone.id);
+        taskItem.setListID(zone.getAttribute('value')!);
 
         if (!bottomTask) {
             zone.appendChild(currentTask);

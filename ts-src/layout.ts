@@ -122,9 +122,11 @@ export function setupNewTaskModalFields(api: API) {
         }
 
         // Add to todo list
-        const list = (document.querySelectorAll('.swim-list') as NodeListOf<HTMLElement>)[0];
+        const firstList = (document.querySelectorAll('.swim-list') as NodeListOf<HTMLElement>)[0];
+        const listContent = firstList.querySelector('.list-content') as HTMLDivElement;
+
         const taskEl = createTaskItemElement(api, taskTitle.value, api.CurrentTaskIndex);
-        list.appendChild(taskEl);
+        listContent.appendChild(taskEl);
 
         const tagKind = document.querySelector('#kind-option') as HTMLSelectElement;
         const dueDate = document.querySelector('#due-date') as HTMLInputElement;
@@ -132,7 +134,7 @@ export function setupNewTaskModalFields(api: API) {
 
         api.addNewTask(
             date,
-            list.id,
+            firstList.id,
             taskTitle.value,
             tagStrToKind(tagKind.value),
             dueDate.valueAsDate,
@@ -156,8 +158,12 @@ export function generateElementsForLoadedData(api: API) {
 
     // Generate all task elements
     api.Tasks.forEach((task) => {
+        console.log(task);
+
+        console.log(`Loading '${task.ListID}'`);
         const list = document.querySelector(`#${task.ListID}`) as HTMLDivElement;
-        list.appendChild(createTaskItemElement(api, task.Title, task.ID));
+        const content = list.querySelector('.list-content') as HTMLDivElement;
+        content.appendChild(createTaskItemElement(api, task.Title, task.ID));
     });
 }
 
@@ -248,9 +254,11 @@ function createListWithName(api: API, title: string): HTMLElement {
             <input class="list-heading" type="text">TODO</h3>
         </div>
      */
+    const listID = listNameToID(title);
+
     const el = document.createElement('div') as HTMLDivElement;
     el.className = 'swim-list';
-    el.id = listNameToID(title);
+    el.id = listID;
 
     const header = document.createElement('div') as HTMLDivElement;
     el.appendChild(header);
@@ -279,13 +287,19 @@ function createListWithName(api: API, title: string): HTMLElement {
             return;
         }
 
-        api.deleteTaskList(el.id);
+        api.deleteTaskList(listID);
 
         const listDiv = document.querySelector('#task-lists') as HTMLDivElement;
         listDiv.removeChild(el);
     };
 
-    setupListDragZone(api, el);
+    const listContentZone = document.createElement('div') as HTMLDivElement;
+    el.appendChild(listContentZone);
+
+    listContentZone.setAttribute('value', listID);
+    listContentZone.className = 'list-content';
+
+    setupListDragZone(api, listContentZone);
 
     return el;
 }
@@ -303,6 +317,9 @@ function listHeaderChange(el: HTMLElement, self: HTMLInputElement, e: Event, api
         self.value = self.defaultValue;
         return;
     }
+
+    const content = el.querySelector('.list-content') as HTMLElement;
+    content.setAttribute('value', newID);
 
     api.renameTaskList(self.defaultValue, self.value);
     self.defaultValue = self.value;
