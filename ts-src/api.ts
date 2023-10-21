@@ -1,6 +1,6 @@
 import { CardHandler } from './cardhandler';
 import { CardList } from './cardlist';
-import { generateElementsForLoadedData } from './layout';
+import { generateElementsFromLoadedData } from './layout';
 import { Color, DueDate, TagKind, TaskItem } from './task';
 
 interface KanbanBoardData {
@@ -57,7 +57,13 @@ export class API {
             this.cardHandler.push(new CardList(list, listNameToID(list)))
         );
 
-        generateElementsForLoadedData(this);
+        this.cardHandler.setHasDefault();
+
+        generateElementsFromLoadedData(this);
+    }
+
+    public removeTaskItem(item: TaskItem) {
+        this.tasks.delete(item.ID);
     }
 
     public tryAddNewList(): boolean {
@@ -70,6 +76,7 @@ export class API {
 
     public renameTaskList(oldID: string, newID: string) {
         this.cardHandler.renameTaskList(oldID, newID);
+        this.cardHandler.setHasDefault();
     }
 
     public deleteTaskList(identifier: string) {

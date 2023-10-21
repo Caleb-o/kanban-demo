@@ -18,15 +18,22 @@ export class CardHandler {
         this.lists = new Map();
     }
 
-    public push(card: CardList) {
-        this.lists.set(card.Identifier, card);
+    public setHasDefault() {
+        this.hasDefault = this.lists.has('New List');
+    }
+
+    public push(list: CardList) {
+        this.lists.set(list.Identifier, list);
     }
 
     public tryAddNewList(): boolean {
-        if (this.lists.has('New List')) {
+        if (this.hasDefault) {
             return false;
         }
+
         this.lists.set('New List', new CardList('New List', 'new-list'));
+        this.hasDefault = true;
+
         return true;
     }
 
@@ -34,6 +41,7 @@ export class CardHandler {
         for (let [id, list] of this.lists.entries()) {
             if (list.ElementID === identifier) {
                 this.lists.delete(id);
+                this.setHasDefault();
                 return;
             }
         }

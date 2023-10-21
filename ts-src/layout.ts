@@ -13,6 +13,9 @@ export function setupListAddButton(api: API) {
         }
 
         listDiv.insertBefore(listEl, listDiv.children[listDiv.children.length - 1]);
+
+        // Save results to disk
+        api.serializeToLocalStorage();
     };
 }
 
@@ -38,7 +41,6 @@ export function setupModalLayout() {
     colorSelected.value = firstStyle.backgroundColor;
     colorSelected.style.background = firstStyle.backgroundColor;
 
-    // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
         modal.style.display = 'none';
     };
@@ -93,6 +95,7 @@ export function setupNewTaskModalFields(api: API) {
     const taskTitle = document.querySelector('#task-title') as HTMLInputElement;
     const taskDesc = document.querySelector('#task-desc') as HTMLTextAreaElement;
     const saveBtn = document.querySelector('#modal-save-btn') as HTMLButtonElement;
+    const deleteBtn = document.querySelector('#modal-delete-btn') as HTMLButtonElement;
 
     const tagKind = document.querySelector('#kind-option') as HTMLSelectElement;
     tagKind.value = 'prg';
@@ -142,12 +145,18 @@ export function setupNewTaskModalFields(api: API) {
             taskDesc.value
         );
 
+        // Save results to disk
+        api.serializeToLocalStorage();
+
         // Hide modal
         modal.style.display = 'none';
     };
+
+    // Hide delete button when creating new task
+    deleteBtn.style.display = 'none';
 }
 
-export function generateElementsForLoadedData(api: API) {
+export function generateElementsFromLoadedData(api: API) {
     const listDiv = document.querySelector('#task-lists') as HTMLDivElement;
 
     // Generate all list elements
@@ -158,9 +167,6 @@ export function generateElementsForLoadedData(api: API) {
 
     // Generate all task elements
     api.Tasks.forEach((task) => {
-        console.log(task);
-
-        console.log(`Loading '${task.ListID}'`);
         const list = document.querySelector(`#${task.ListID}`) as HTMLDivElement;
         const content = list.querySelector('.list-content') as HTMLDivElement;
         content.appendChild(createTaskItemElement(api, task.Title, task.ID));
@@ -175,6 +181,7 @@ function populateTaskModalFields(api: API, taskID: string) {
     const createdOn = document.querySelector('#created-on') as HTMLElement;
     const taskTitle = document.querySelector('#task-title') as HTMLInputElement;
     const saveBtn = document.querySelector('#modal-save-btn') as HTMLButtonElement;
+    const deleteBtn = document.querySelector('#modal-delete-btn') as HTMLButtonElement;
     const taskDesc = document.querySelector('#task-desc') as HTMLTextAreaElement;
 
     const tagKind = document.querySelector('#kind-option') as HTMLSelectElement;
@@ -201,6 +208,27 @@ function populateTaskModalFields(api: API, taskID: string) {
             colorSelected.style.background,
             taskDesc.value
         );
+
+        // Save results to disk
+        api.serializeToLocalStorage();
+
+        // Hide modal
+        modal.style.display = 'none';
+    };
+
+    deleteBtn.style.display = 'inline';
+    deleteBtn.onclick = () => {
+        // TODO: Add confirmation modal
+
+        api.removeTaskItem(task);
+
+        const listEl = document.querySelector(`#${task.ListID}`) as HTMLElement;
+        const content = listEl.querySelector('.list-content') as HTMLElement;
+        content.removeChild(document.querySelector(`#task-id-${task.ID}`)!);
+
+        // Save results to disk
+        api.serializeToLocalStorage();
+
         // Hide modal
         modal.style.display = 'none';
     };
@@ -274,6 +302,14 @@ function createListWithName(api: API, title: string): HTMLElement {
 
     headerTitle.onchange = (e) => listHeaderChange(el, headerTitle, e, api);
 
+    const listContentZone = document.createElement('div') as HTMLDivElement;
+    el.appendChild(listContentZone);
+
+    listContentZone.setAttribute('value', listID);
+    listContentZone.className = 'list-content';
+
+    setupListDragZone(api, listContentZone);
+
     const deleteSpan = document.createElement('span') as HTMLSpanElement;
     header.appendChild(deleteSpan);
 
@@ -282,24 +318,19 @@ function createListWithName(api: API, title: string): HTMLElement {
     deleteSpan.onclick = (e) => {
         e.preventDefault();
 
-        if (el.children.length > 1) {
+        if (listContentZone.children.length > 0) {
             showErrorModal('Cannot delete list that contains tasks.');
             return;
         }
 
-        api.deleteTaskList(listID);
-
         const listDiv = document.querySelector('#task-lists') as HTMLDivElement;
         listDiv.removeChild(el);
+
+        api.deleteTaskList(listID);
+
+        // Save results to disk
+        api.serializeToLocalStorage();
     };
-
-    const listContentZone = document.createElement('div') as HTMLDivElement;
-    el.appendChild(listContentZone);
-
-    listContentZone.setAttribute('value', listID);
-    listContentZone.className = 'list-content';
-
-    setupListDragZone(api, listContentZone);
 
     return el;
 }
@@ -322,6 +353,10 @@ function listHeaderChange(el: HTMLElement, self: HTMLInputElement, e: Event, api
     content.setAttribute('value', newID);
 
     api.renameTaskList(self.defaultValue, self.value);
+
     self.defaultValue = self.value;
     el.id = newID;
+
+    // Save results to disk
+    api.serializeToLocalStorage();
 }
