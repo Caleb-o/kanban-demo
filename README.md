@@ -13,7 +13,7 @@ Simple Kanban board to practice front-end development
 -   Task drag n drop between lists
 -   Simple error modal
 -   Local storage
--   No frameworks, just the JS generated from TS and webpack :^)
+-   No frameworks, just JS and webpack :^)
 
 ## Dev dependencies
 
@@ -22,17 +22,14 @@ Simple Kanban board to practice front-end development
 
 ## Currently Missing / Wanted
 
--   Task deletion
 -   Completion flag
 -   More task details and options
 -   Color visible from card
--   Due date visible from card (if exists)
 -   Re-arrange lists
 -   Background image select
 -   import / export board
--   Draggable horizontal, when many lists exist
+-   Draggable view horizontal, when many lists exist
 -   Card dependencies. Allow cards to depend on others, so that completion cannot be marked unless depending cards are also marked as complete. (Depends on completion flag...)
--   Default list
 
 ## Sources Used
 
