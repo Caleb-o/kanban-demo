@@ -9,7 +9,7 @@ import {
   setupErrorModalLayout,
 } from "./layout";
 
-function main() {
+window.addEventListener("load", function() {
   const api = new API();
   api.tryLoadFromLocalStorage();
 
@@ -19,6 +19,4 @@ function main() {
 
   setupErrorModalLayout();
   setupModalLayout();
-}
-
-window.addEventListener("load", main);
+});

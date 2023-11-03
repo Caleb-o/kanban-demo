@@ -17,7 +17,6 @@ Simple Kanban board to practice front-end development
 
 ## Dev dependencies
 
--   TSC
 -   Webpack
 
 ## Currently Missing / Wanted
